@@ -1,0 +1,4 @@
+breakout:
+  lookback_candles: 5
+  min_volume_multiplier: 1.5
+  min_price_move_pct: 0.5

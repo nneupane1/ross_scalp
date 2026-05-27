@@ -1,0 +1,14 @@
+timezone: Europe/Berlin
+sessions:
+  london:
+    start: "09:00"
+    end: "12:00"
+  new_york:
+    start: "15:30"
+    end: "18:30"
+scanner:
+  refresh_interval_minutes: 5
+  top_n_symbols: 10
+data:
+  candle_interval: 1m
+  history_window: 100

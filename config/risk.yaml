@@ -1,0 +1,5 @@
+account_size: 25000
+risk_per_trade_pct: 0.3
+daily_limits:
+  max_loss_pct: 1.5
+  max_trades: 20
