@@ -26,3 +26,26 @@ class CandleStore:
             df = self.client.get_klines(symbol, limit=self.limit)
             self.store[symbol] = df
         return self.store.get(symbol)
+
+    def refresh(self, symbol: str) -> Optional[pd.DataFrame]:
+        """Fetch latest candles and update in-memory store (rolling up to limit)."""
+        df = self.client.get_klines(symbol, limit=self.limit)
+        if df is None or df.empty:
+            return self.store.get(symbol)
+        self.store[symbol] = df
+        return df
+
+    def update_latest(self, symbol: str) -> Optional[pd.DataFrame]:
+        """Fetch only recent few candles and merge with store to avoid refetching full history."""
+        df_new = self.client.get_klines(symbol, limit=5)
+        if df_new is None or df_new.empty:
+            return self.store.get(symbol)
+        existing = self.store.get(symbol)
+        if existing is None:
+            self.store[symbol] = df_new
+            return df_new
+        # join on close_time
+        combined = pd.concat([existing, df_new]).drop_duplicates(subset=["close_time"]).sort_values("close_time")
+        # keep last self.limit rows
+        self.store[symbol] = combined.iloc[-self.limit :].reset_index(drop=True)
+        return self.store[symbol]

@@ -1,14 +1,5 @@
-"""Small runner to validate the Binance client quickly.
-
-Usage:
-    python run/run_paper_trading.py
-"""
-from core.engine import Engine
-
-
-def main():
-    engine = Engine()
-    engine.run_cycle()
+"""Run the paper trading engine from the run folder."""
+from main import main
 
 
 if __name__ == "__main__":

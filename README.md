@@ -4,6 +4,12 @@ Minimal Ross-style momentum trading system scaffold.
 
 Structure mirrors a production-like paper-trading loop: scan → select → monitor → trade → evaluate.
 
+Run the live system:
+
+```bash
+python main.py
+```
+
 Run quick smoke test:
 
 ```bash
