@@ -201,6 +201,60 @@ python main.py
 python run/run_paper_trading.py
 ```
 
+## `main.py` Workflow
+
+`main.py` is the central entry point for the live system. When run, it starts the session-aware event loop in `core/event_loop.py`, which performs the following repeatable process:
+
+1. Check whether the current time is inside a configured trading session.
+2. Refresh the watchlist at the configured interval using `scanner/watchlist_manager.py`.
+3. Update candles for each watchlist symbol with `data_layer/candle_store.py`.
+4. Run breakout detection in `strategy/breakout.py`.
+5. Apply risk-based sizing in `risk/risk_manager.py`.
+6. Execute trades in `portfolio/portfolio_manager.py`.
+7. Exit positions immediately when momentum stalls or moves against the position using `strategy/execution_logic.py`.
+
+This keeps the system aligned with a Ross-style loop: scan the market, focus on a small number of active symbols, and trade quickly when breakout behavior appears.
+
+## Example Config
+
+### `config/system.yaml`
+
+```yaml
+timezone: Europe/Berlin
+sessions:
+  london:
+    start: "09:00"
+    end: "12:00"
+  new_york:
+    start: "15:30"
+    end: "18:30"
+scanner:
+  refresh_interval_minutes: 5
+  top_n_symbols: 10
+data:
+  candle_interval: 1m
+  history_window: 100
+```
+
+### `config/strategy.yaml`
+
+```yaml
+breakout:
+  lookback_candles: 5
+  min_volume_multiplier: 1.5
+  min_price_move_pct: 0.5
+```
+
+### `config/risk.yaml`
+
+```yaml
+account_size: 25000
+risk_per_trade_pct: 0.3
+daily_limits:
+  max_loss_pct: 1.5
+  max_trades: 20
+```
+
 ## Logging and State
 
 The system persists logs and state to the `data/` folder:
